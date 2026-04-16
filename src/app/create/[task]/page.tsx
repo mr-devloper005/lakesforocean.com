@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plus, Save } from "lucide-react";
 import { NavbarShell } from "@/components/shared/navbar-shell";
+import { pinionAppShell } from "@/config/pinion-surfaces";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -182,7 +183,7 @@ export default function CreateTaskPage() {
 
   if (!taskConfig || !formConfig) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className={pinionAppShell}>
         <NavbarShell />
         <main className="mx-auto max-w-3xl px-4 py-16 text-center">
           <h1 className="text-2xl font-semibold text-foreground">Task not available</h1>
@@ -271,7 +272,7 @@ export default function CreateTaskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
       <main className="mx-auto max-w-4xl px-4 py-12">
         <div className="mb-8 flex items-center gap-3">

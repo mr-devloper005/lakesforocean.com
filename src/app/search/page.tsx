@@ -89,10 +89,10 @@ export default async function SearchPage({
               name="q"
               defaultValue={query}
               placeholder="Search across tasks..."
-              className="h-11 pl-9"
+              className="h-11 rounded-[var(--radius)] border-neutral-200 pl-9"
             />
           </div>
-          <Button type="submit" className="h-11">
+          <Button type="submit" className="h-11 rounded-[var(--radius)] bg-neutral-950 text-white hover:bg-neutral-800">
             Search
           </Button>
         </form>
@@ -107,7 +107,7 @@ export default async function SearchPage({
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
+        <div className="rounded-[var(--radius)] border border-dashed border-neutral-200/90 bg-white/60 p-10 text-center text-neutral-600">
           No matching posts yet.
         </div>
       )}
