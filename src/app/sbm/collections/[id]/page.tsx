@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Folder, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { NavbarShell } from '@/components/shared/navbar-shell'
+import { pinionAppShell } from '@/config/pinion-surfaces'
 import { Footer } from '@/components/shared/footer'
 import { BookmarkCard } from '@/components/sbm/bookmark-card'
 import { Button } from '@/components/ui/button'
@@ -38,7 +39,7 @@ export default function BookmarkCollectionDetailPage() {
 
   if (!collection) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className={pinionAppShell}>
         <NavbarShell />
         <main className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
           <Card className="border-border bg-card">
@@ -57,7 +58,7 @@ export default function BookmarkCollectionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
 
       <main>

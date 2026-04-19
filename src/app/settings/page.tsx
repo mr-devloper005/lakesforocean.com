@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { NavbarShell } from "@/components/shared/navbar-shell"
+import { pinionAppShell } from "@/config/pinion-surfaces"
 import { useAuth } from "@/lib/auth-context"
 import { useToast } from "@/components/ui/use-toast"
 import { loadFromStorage, saveToStorage, storageKeys } from "@/lib/local-storage"
@@ -236,7 +237,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

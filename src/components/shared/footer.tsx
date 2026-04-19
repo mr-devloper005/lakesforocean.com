@@ -26,9 +26,8 @@ const footerLinks = {
   })),
   company: [
     { name: 'About', href: '/about' },
-    { name: 'Team', href: '/team' },
+    { name: 'Contact', href: '/contact' },
     { name: 'Careers', href: '/careers' },
-    { name: 'Blog', href: '/blog' },
     { name: 'Press', href: '/press' },
   ],
   resources: [
@@ -88,7 +87,7 @@ export function Footer() {
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-7">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/8 p-1.5">
-                  <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+                  <img src="/favicon.png?v=lq2026" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
                 </div>
                 <div>
                   <p className="text-lg font-semibold">{SITE_CONFIG.name}</p>
@@ -174,33 +173,50 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] text-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
-          <div>
-            <Link href="/" className="flex items-center gap-3">
-              <div className="h-11 w-11 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="44" height="44" className="h-full w-full object-contain" />
-              </div>
-              <div>
-                <span className="block text-lg font-semibold">{SITE_CONFIG.name}</span>
-                <span className="text-xs uppercase tracking-[0.22em] text-slate-500">{siteContent.footer.tagline}</span>
-              </div>
-            </Link>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-slate-600">{SITE_CONFIG.description}</p>
-          </div>
-          {(['platform', 'company', 'resources', 'legal'] as const).map((section) => (
+    <footer className="border-t border-neutral-200/90 bg-white text-neutral-950">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-8 border-b border-neutral-200/90 pb-14 lg:flex-row lg:items-center lg:justify-between">
+          <Link href="/" className="flex max-w-lg items-center gap-4">
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[var(--radius)] border border-neutral-200 bg-white p-1.5 shadow-sm">
+              <img src="/favicon.png?v=lq2026" alt={`${SITE_CONFIG.name} logo`} width="56" height="56" className="h-full w-full object-contain" />
+            </div>
+            <div>
+              <span className="block text-lg font-semibold tracking-tight text-neutral-950">{SITE_CONFIG.name}</span>
+              <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6b8caf]">{siteContent.footer.tagline}</span>
+            </div>
+          </Link>
+          <p className="max-w-xl text-sm leading-relaxed text-neutral-600 lg:text-right">{SITE_CONFIG.description}</p>
+        </div>
+
+        <div className="mt-14 grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+          {(['company', 'resources', 'legal'] as const).map((section) => (
             <div key={section}>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">{section}</h3>
-              <ul className="mt-5 space-y-3 text-sm text-slate-600">
-                {footerLinks[section].map((item: any) => (
-                  <li key={item.name}><Link href={item.href} className="flex items-center gap-2 hover:text-slate-950">{item.icon ? <item.icon className="h-4 w-4" /> : null}{item.name}</Link></li>
+              <h3 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#6b8caf]">{section}</h3>
+              <ul className="mt-6 space-y-3.5">
+                {footerLinks[section].map((item) => (
+                  <li key={item.name}>
+                    <Link href={item.href} className="text-sm text-neutral-700 transition-colors hover:text-[#003366]">
+                      {item.name}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">&copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.</div>
+
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-neutral-200/90 pt-8 text-sm text-neutral-500 sm:flex-row">
+          <p>
+            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            {footerLinks.platform.slice(0, 4).map((item: any) => (
+              <Link key={item.name} href={item.href} className="text-xs font-medium text-[#005DAA] hover:text-[#003366]">
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </footer>
   )

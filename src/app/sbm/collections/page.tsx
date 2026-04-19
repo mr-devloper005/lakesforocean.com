@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { FolderPlus } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
+import { pinionAppShell } from '@/config/pinion-surfaces'
 import { Footer } from '@/components/shared/footer'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -30,7 +31,7 @@ export default function BookmarkCollectionsPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
 
       <main>

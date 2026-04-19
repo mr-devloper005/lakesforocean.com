@@ -9,6 +9,7 @@ export type ThemePackKey =
   | 'magazine-contrast'
   | 'pinterest-creator'
   | 'visual-portfolio'
+  | 'pinion-visual'
   | 'curation-library'
   | 'curation-warm'
 
