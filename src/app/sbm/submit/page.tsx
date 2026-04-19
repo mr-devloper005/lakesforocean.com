@@ -1,10 +1,11 @@
-﻿'use client'
+'use client'
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
+import { pinionAppShell } from '@/config/pinion-surfaces'
 import { Footer } from '@/components/shared/footer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -110,7 +111,7 @@ export default function SubmitBookmarkPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
 
       <main>

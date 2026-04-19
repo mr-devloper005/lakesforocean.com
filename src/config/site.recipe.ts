@@ -2,14 +2,14 @@ import type { SiteRecipe } from '@/design/factory/recipe-types'
 
 export const SITE_RECIPE: SiteRecipe = {
   productFamily: 'visual',
-  themePack: 'pinterest-creator',
+  themePack: 'pinion-visual',
   homepageTemplate: 'image-profile-home',
-  navbarTemplate: 'floating-bar',
-  footerTemplate: 'dense-footer',
-  motionPack: 'studio-stagger',
+  navbarTemplate: 'editorial-bar',
+  footerTemplate: 'columns-footer',
+  motionPack: 'minimal',
   primaryTask: 'image',
-  enabledTasks: ['image', 'profile', 'article'],
-  taskTemplates: {'article': 'article-editorial', 'image': 'image-masonry', 'profile': 'profile-creator'},
+  enabledTasks: ['image', 'profile'],
+  taskTemplates: { image: 'image-portfolio', profile: 'profile-creator' },
   manualOverrides: {
     navbar: false,
     footer: false,

@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useParams } from "next/navigation";
 import { MapPin, Globe, Phone, Tag, Mail } from "lucide-react";
 import { NavbarShell } from "@/components/shared/navbar-shell";
+import { pinionAppShell } from "@/config/pinion-surfaces";
 import { Footer } from "@/components/shared/footer";
 import { TaskImageCarousel } from "@/components/tasks/task-image-carousel";
 import { Badge } from "@/components/ui/badge";
@@ -109,7 +110,7 @@ export default function LocalPostDetailPage() {
 
   if (!post || !taskConfig) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className={pinionAppShell}>
         <NavbarShell />
         <main className="mx-auto max-w-3xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold text-foreground">Post not found</h1>
@@ -135,7 +136,7 @@ export default function LocalPostDetailPage() {
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pinionAppShell}>
       <NavbarShell />
       <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         <Link

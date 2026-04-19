@@ -95,6 +95,21 @@ export const THEME_PACKS: Record<ThemePackDefinition['key'], ThemePackDefinition
     },
     notes: ['Portfolio-style hero', 'Large showcase panels', 'Less noisy support content'],
   },
+  'pinion-visual': {
+    key: 'pinion-visual',
+    label: 'Pinion Visual',
+    productFamily: 'visual',
+    brandPack: 'editorial-luxe',
+    navbar: 'editorial-bar',
+    footer: 'columns-footer',
+    homeLayout: 'image-profile-home',
+    motionPack: 'minimal',
+    defaultTaskTemplates: {
+      image: 'image-portfolio',
+      profile: 'profile-creator',
+    },
+    notes: ['Corporate light shell', 'Serif headlines', 'Gallery and profile emphasis', 'Gradient accent discipline'],
+  },
   'curation-library': {
     key: 'curation-library',
     label: 'Curation Library',

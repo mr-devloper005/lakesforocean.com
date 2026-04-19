@@ -7,6 +7,9 @@ import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { NavbarShell } from "@/components/shared/navbar-shell"
+import { Footer } from "@/components/shared/footer"
+import { pinionAppShell } from "@/config/pinion-surfaces"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
@@ -25,12 +28,14 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className={pinionAppShell}>
+      <NavbarShell />
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-16 sm:px-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md rounded-[1.25rem] border border-neutral-200/90 bg-white p-8 shadow-[0_22px_64px_rgba(15,15,25,0.06)] sm:p-10"
       >
         <Link
           href="/login"
@@ -42,10 +47,10 @@ export default function ForgotPasswordPage() {
 
         {!isSubmitted ? (
           <>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+            <h1 className="mb-2 font-sans text-3xl font-semibold tracking-tight text-neutral-950">
               Reset your password
             </h1>
-            <p className="text-muted-foreground mb-8">
+            <p className="mb-8 text-neutral-600">
               Enter your email address and we'll send you a link to reset your password.
             </p>
 
@@ -66,7 +71,7 @@ export default function ForgotPasswordPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full rounded-[var(--radius)] bg-neutral-950 hover:bg-neutral-800" disabled={isLoading}>
                 {isLoading ? "Sending..." : "Send reset link"}
               </Button>
             </form>
@@ -80,7 +85,7 @@ export default function ForgotPasswordPage() {
             <div className="w-16 h-16 mx-auto mb-6 bg-green-500/20 rounded-full flex items-center justify-center">
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+            <h1 className="mb-2 font-sans text-3xl font-semibold tracking-tight text-neutral-950">
               Check your email
             </h1>
             <p className="text-muted-foreground mb-8">
@@ -101,6 +106,8 @@ export default function ForgotPasswordPage() {
           </motion.div>
         )}
       </motion.div>
+      </div>
+      <Footer />
     </div>
   )
 }
