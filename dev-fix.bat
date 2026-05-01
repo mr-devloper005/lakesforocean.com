@@ -1,0 +1,9 @@
+@echo off
+echo Stopping Node processes...
+taskkill /F /IM node.exe 2>nul
+echo.
+echo Cleaning lock files...
+rmdir /S /Q .next\dev 2>nul
+echo.
+echo Starting dev server...
+start pnpm dev

@@ -6,40 +6,13 @@ import { ContentImage } from "@/components/shared/content-image";
 import { TaskPostCard } from "@/components/shared/task-post-card";
 import { Button } from "@/components/ui/button";
 import { SchemaJsonLd } from "@/components/seo/schema-jsonld";
+import { RichContent, formatRichHtml } from "@/components/shared/rich-content";
 import { buildPostUrl } from "@/lib/task-data";
 import { buildPostMetadata, buildTaskMetadata } from "@/lib/seo";
 import { fetchTaskPostBySlug, fetchTaskPosts } from "@/lib/task-data";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { pinionAppShell } from "@/config/pinion-surfaces";
 
 export const revalidate = 3;
-
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-const sanitizeRichHtml = (html: string) =>
-  html
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<iframe[^>]*>[\s\S]*?<\/iframe>/gi, "")
-    .replace(/<object[^>]*>[\s\S]*?<\/object>/gi, "")
-    .replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, "")
-    .replace(/\shref\s*=\s*(['"])javascript:.*?\1/gi, ' href="#"');
-
-const formatRichHtml = (raw?: string | null, fallback = "Profile details will appear here once available.") => {
-  const source = typeof raw === "string" ? raw.trim() : "";
-  if (!source) return `<p>${escapeHtml(fallback)}</p>`;
-  if (/<[a-z][\s\S]*>/i.test(source)) return sanitizeRichHtml(source);
-  return source
-    .split(/\n{2,}/)
-    .map((paragraph) => `<p>${escapeHtml(paragraph.replace(/\n/g, " ").trim())}</p>`)
-    .join("");
-};
 
 export async function generateStaticParams() {
   const posts = await fetchTaskPosts("profile", 50);
@@ -108,40 +81,53 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
   };
 
   return (
-    <div className={pinionAppShell}>
+    <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
       <NavbarShell />
-      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+      
+      {/* Animated background orbs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 blur-[100px] animate-pulse" />
+        <div className="absolute top-1/3 -left-40 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-orange-500/20 to-red-500/20 blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-40 right-1/4 h-[450px] w-[450px] rounded-full bg-gradient-to-br from-amber-500/15 to-yellow-500/15 blur-[100px] animate-pulse" style={{ animationDelay: '4s' }} />
+      </div>
+
+      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:px-8">
         <SchemaJsonLd data={breadcrumbData} />
-        <section className="rounded-3xl border border-border/60 bg-white/90 p-8 shadow-sm md:p-12">
-          <div className="grid gap-8 md:grid-cols-[200px_1fr] md:items-start">
-            <div className="flex justify-center md:justify-start">
-              <div className="relative h-36 w-36 overflow-hidden rounded-full border border-border/70 bg-muted">
-                {logoUrl ? (
-                  <ContentImage src={logoUrl} alt={post.title} fill className="object-cover" sizes="144px" intrinsicWidth={144} intrinsicHeight={144} />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-muted-foreground">
-                    {post.title.slice(0, 1).toUpperCase()}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground sm:text-4xl">{brandName}</h1>
-              {domain ? (
-                <p className="mt-1 text-sm font-medium text-muted-foreground">{domain}</p>
-              ) : null}
-              <article
-                className="article-content prose prose-slate mt-6 max-w-2xl text-base leading-relaxed prose-p:my-4 prose-a:text-primary prose-a:underline prose-strong:font-semibold"
-                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-              />
-              {website ? (
-                <div className="mt-8">
-                  <Button asChild size="lg" className="px-7 text-base">
-                    <Link href={website} target="_blank" rel="noopener noreferrer">
-                      Visit Official Site
-                    </Link>
-                  </Button>
+        
+        {/* Profile Header - No Card */}
+        <section className="grid gap-8 md:grid-cols-[220px_1fr] md:items-start">
+          <div className="flex justify-center md:justify-start">
+            <div className="relative h-40 w-40 overflow-hidden rounded-2xl bg-white/10">
+              {logoUrl ? (
+                <ContentImage src={logoUrl} alt={post.title} fill className="object-cover" sizes="160px" intrinsicWidth={160} intrinsicHeight={160} />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-white/60">
+                  {post.title.slice(0, 1).toUpperCase()}
                 </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-300">Profile</p>
+            <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl">{brandName}</h1>
+            {domain ? (
+              <p className="mt-2 text-sm font-medium text-white/60">{domain}</p>
+            ) : null}
+            <RichContent html={descriptionHtml} className="mt-6 max-w-3xl text-white/80 prose-p:text-white/80" />
+            <div className="mt-8 flex flex-wrap gap-3">
+              {website ? (
+                <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 px-7 text-base text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50">
+                  <Link href={website} target="_blank" rel="noopener noreferrer">
+                    Visit Official Site
+                  </Link>
+                </Button>
+              ) : null}
+              {typeof content.email === "string" && content.email ? (
+                <Button asChild size="lg" variant="outline" className="border-white/20 px-7 text-base text-white bg-white/10 hover:bg-white/20 hover:text-white">
+                  <Link href={`mailto:${content.email}`}>
+                    Email Profile
+                  </Link>
+                </Button>
               ) : null}
             </div>
           </div>
@@ -150,8 +136,8 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
         {suggestedArticles.length ? (
           <section className="mt-12">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-foreground">Suggested articles</h2>
-              <Link href="/articles" className="text-sm font-medium text-primary hover:underline">
+              <h2 className="text-xl font-semibold text-white">Suggested articles</h2>
+              <Link href="/articles" className="text-sm font-medium text-amber-400 hover:text-amber-300">
                 View all
               </Link>
             </div>
@@ -165,26 +151,6 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
                 />
               ))}
             </div>
-            <nav className="mt-6 rounded-2xl border border-border bg-card/60 p-4">
-              <p className="text-sm font-semibold text-foreground">Related links</p>
-              <ul className="mt-2 space-y-2 text-sm">
-                {suggestedArticles.slice(0, 3).map((article) => (
-                  <li key={`related-${article.id}`}>
-                    <Link
-                      href={buildPostUrl("article", article.slug)}
-                      className="text-primary underline-offset-4 hover:underline"
-                    >
-                      {article.title}
-                    </Link>
-                  </li>
-                ))}
-                <li>
-                  <Link href="/profile" className="text-primary underline-offset-4 hover:underline">
-                    Browse all profiles
-                  </Link>
-                </li>
-              </ul>
-            </nav>
           </section>
         ) : null}
       </main>

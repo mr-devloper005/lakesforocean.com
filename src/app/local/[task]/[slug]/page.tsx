@@ -42,8 +42,8 @@ const getContent = (post: any): PostContent => {
 const getImageUrls = (post: any, content: PostContent) => {
   const media = Array.isArray(post.media) ? post.media : [];
   const mediaImages = media
-    .map((item) => item?.url)
-    .filter((url): url is string => isValidImageUrl(url));
+    .map((item: { url?: string } | null | undefined) => item?.url)
+    .filter((url: string | undefined): url is string => isValidImageUrl(url));
   const contentImages = Array.isArray(content.images)
     ? content.images.filter((url): url is string => isValidImageUrl(url))
     : [];
@@ -133,7 +133,16 @@ export default function LocalPostDetailPage() {
   const images = getImageUrls(post, content);
   const isArticle = task === "article";
   const isPdf = task === "pdf";
+  const isImage = task === "image";
+  const isProfile = task === "profile";
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
+  const profileName =
+    (typeof (content as Record<string, unknown>).brandName === "string" && String((content as Record<string, unknown>).brandName)) ||
+    (typeof (content as Record<string, unknown>).companyName === "string" && String((content as Record<string, unknown>).companyName)) ||
+    (typeof (content as Record<string, unknown>).name === "string" && String((content as Record<string, unknown>).name)) ||
+    post.title;
+  const profileWebsite = typeof content.website === "string" ? content.website : "";
+  const profileDomain = profileWebsite ? profileWebsite.replace(/^https?:\/\//, "").replace(/\/.*$/, "") : "";
 
   return (
     <div className={pinionAppShell}>
@@ -176,6 +185,61 @@ export default function LocalPostDetailPage() {
                 </Link>
               </Button>
             ) : null}
+          </div>
+        ) : isImage ? (
+          <div className="grid gap-8 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+            <div className="overflow-hidden rounded-[2rem] border border-[#e7ddd4] bg-[#f6eee6] shadow-[0_28px_80px_rgba(74,48,24,0.08)]">
+              <TaskImageCarousel images={images} />
+            </div>
+            <div className="rounded-[2rem] border border-[#eadfd5] bg-white/95 p-6 shadow-[0_20px_60px_rgba(74,48,24,0.06)]">
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[#7f6b5b]">
+                <Badge className="border-0 bg-[#183250] px-3 py-1 text-white hover:bg-[#183250]">
+                  {category}
+                </Badge>
+                {location ? (
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    {location}
+                  </span>
+                ) : null}
+              </div>
+              <h1 className="mt-5 text-4xl font-semibold leading-tight text-[#241913]">{post.title}</h1>
+              <RichContent html={descriptionHtml} className="mt-5 max-w-none text-[#5f5045] prose-p:text-[#5f5045]" />
+            </div>
+          </div>
+        ) : isProfile ? (
+          <div className="overflow-hidden rounded-[2rem] border border-[#d9e3ef] bg-[linear-gradient(180deg,#ffffff_0%,#f5f8fc_100%)] shadow-[0_24px_70px_rgba(31,57,96,0.08)]">
+            <div className="grid gap-8 p-7 lg:grid-cols-[240px_1fr] lg:p-10">
+              <div className="flex flex-col items-center lg:items-start">
+                <div className="relative h-40 w-40 overflow-hidden rounded-[2rem] border border-white/80 bg-white shadow-[0_18px_40px_rgba(31,57,96,0.12)]">
+                  <ContentImage src={images[0]} alt={profileName} fill className="object-cover" intrinsicWidth={400} intrinsicHeight={400} />
+                </div>
+                <div className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
+                  <Badge className="border-0 bg-[#123b69] px-3 py-1 text-white hover:bg-[#123b69]">
+                    {category}
+                  </Badge>
+                  {location ? <Badge variant="outline" className="border-[#d6e0eb] text-[#5f7489]">{location}</Badge> : null}
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#7f92a7]">Profile</p>
+                <h1 className="mt-3 text-4xl font-semibold leading-tight text-[#16304e]">{profileName}</h1>
+                {profileDomain ? <p className="mt-2 text-sm font-medium text-[#6c8196]">{profileDomain}</p> : null}
+                <RichContent html={descriptionHtml} className="mt-6 max-w-none text-[#5f6f83] prose-p:text-[#5f6f83]" />
+                <div className="mt-8 flex flex-wrap gap-3">
+                  {profileWebsite ? (
+                    <Button className="h-11 rounded-xl bg-[#123b69] px-5 text-white hover:bg-[#1f4e82]" asChild>
+                      <Link href={profileWebsite} target="_blank" rel="noreferrer">Visit website</Link>
+                    </Button>
+                  ) : null}
+                  {content.email ? (
+                    <Button variant="outline" className="h-11 rounded-xl border-[#d6e0eb] px-5 text-[#123b69]" asChild>
+                      <Link href={`mailto:${content.email}`}>Email profile</Link>
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
