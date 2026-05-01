@@ -54,6 +54,18 @@ const getImageUrl = (post: SitePost, content: ListingContent) => {
   return '/placeholder.svg?height=640&width=960'
 }
 
+const getProfileName = (post: SitePost, content: ListingContent & Record<string, unknown>) =>
+  (typeof content.brandName === 'string' && content.brandName) ||
+  (typeof content.companyName === 'string' && content.companyName) ||
+  (typeof content.name === 'string' && content.name) ||
+  post.title
+
+const getImageMetaLabel = (post: SitePost, content: ListingContent & Record<string, unknown>) =>
+  (typeof content.photographer === 'string' && content.photographer) ||
+  (typeof content.author === 'string' && content.author) ||
+  (typeof post.authorName === 'string' && post.authorName) ||
+  'Featured visual'
+
 const cardStyles = {
   'listing-elevated': {
     frame: 'rounded-[1.9rem] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)] hover:-translate-y-1 hover:shadow-[0_28px_75px_rgba(15,23,42,0.14)]',
@@ -106,9 +118,13 @@ export function TaskPostCard({
   const variant = taskKey || 'listing'
   const visualVariant = cardStyles[getVariantForTask(variant)]
   const isBookmarkVariant = variant === 'sbm' || variant === 'social'
+  const isImageVariant = variant === 'image'
+  const isProfileVariant = variant === 'profile'
   const imageAspect = variant === 'image' ? 'aspect-[4/5]' : variant === 'article' ? 'aspect-[16/10]' : variant === 'pdf' ? 'aspect-[4/5]' : variant === 'classified' ? 'aspect-[16/11]' : 'aspect-[4/3]'
   const altText = `${post.title} ${category} ${variant === 'listing' ? 'business listing' : variant} image`
   const imageSizes = variant === 'article' ? '(max-width: 640px) 90vw, (max-width: 1024px) 48vw, 420px' : variant === 'image' ? '(max-width: 640px) 82vw, (max-width: 1024px) 34vw, 320px' : '(max-width: 640px) 85vw, (max-width: 1024px) 42vw, 340px'
+  const profileName = getProfileName(post, content as ListingContent & Record<string, unknown>)
+  const imageMetaLabel = getImageMetaLabel(post, content as ListingContent & Record<string, unknown>)
 
   const { recipe } = getFactoryState()
   const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
@@ -178,6 +194,65 @@ export function TaskPostCard({
           <h3 className={`mt-3 line-clamp-2 text-lg font-semibold leading-snug group-hover:opacity-85 ${visualVariant.title}`}>{post.title}</h3>
           <p className={`mt-2 line-clamp-3 text-sm leading-7 ${visualVariant.muted}`}>{getExcerpt(content.description || post.summary, compact ? 120 : 180) || 'Explore this bookmark.'}</p>
           {content.email ? <div className={`mt-3 inline-flex items-center gap-1 text-xs ${visualVariant.muted}`}><Mail className="h-3.5 w-3.5" />{content.email}</div> : null}
+        </div>
+      </Link>
+    )
+  }
+
+  if (isImageVariant) {
+    return (
+      <Link href={href} className="group flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-[#e5ddd5] bg-[#f8f3ee] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_75px_rgba(63,43,26,0.12)]">
+        <div className="relative aspect-[4/5] overflow-hidden bg-[#e9dfd7]">
+          <ContentImage src={image} alt={altText} fill sizes={imageSizes} quality={80} className="object-cover transition-transform duration-700 group-hover:scale-[1.06]" intrinsicWidth={960} intrinsicHeight={1200} />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1f130c]/65 via-transparent to-transparent opacity-90" />
+          <span className="absolute left-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/88 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2f2119] shadow-sm">
+            <Tag className="h-3.5 w-3.5" />
+            {category}
+          </span>
+          <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/75">{imageMetaLabel}</p>
+            <h3 className="mt-2 line-clamp-2 text-2xl font-semibold leading-tight">{post.title}</h3>
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col p-5">
+          <p className="line-clamp-3 text-sm leading-7 text-[#6f5d4f]">{getExcerpt(content.description || post.summary, compact ? 120 : 170) || 'Explore this visual story.'}</p>
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-[#e6ddd4] pt-4">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8b7564]">Open visual</span>
+            <ArrowUpRight className="h-5 w-5 text-[#2f2119]" />
+          </div>
+        </div>
+      </Link>
+    )
+  }
+
+  if (isProfileVariant) {
+    const headline = getExcerpt(content.description || post.summary, compact ? 110 : 150) || 'Discover the profile, recent work, and contact details.'
+
+    return (
+      <Link href={href} className="group flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-[#d9e0ee] bg-[linear-gradient(180deg,#ffffff_0%,#f4f7fb_100%)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_rgba(31,57,96,0.12)]">
+        <div className="relative min-h-[216px] overflow-hidden p-6">
+          <div className="absolute right-0 top-0 h-28 w-28 rounded-full bg-[#dfe8f7]" />
+          <div className="absolute -left-8 bottom-0 h-24 w-24 rounded-full bg-[#eef3fb]" />
+          <div className="relative flex h-full flex-col">
+            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-[#123b69] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+              <Tag className="h-3.5 w-3.5" />
+              {category}
+            </span>
+            <div className="mt-5 flex items-center gap-4">
+              <div className="relative h-20 w-20 overflow-hidden rounded-[1.4rem] border border-white/80 bg-white shadow-[0_10px_30px_rgba(18,59,105,0.12)]">
+                <ContentImage src={image} alt={profileName} fill sizes="80px" quality={80} className="object-cover" intrinsicWidth={320} intrinsicHeight={320} />
+              </div>
+              <div className="min-w-0">
+                <h3 className="line-clamp-2 text-2xl font-semibold leading-tight text-[#16304e]">{profileName}</h3>
+                {content.location ? <p className="mt-2 inline-flex items-center gap-1 text-sm text-[#62748a]"><MapPin className="h-3.5 w-3.5" />{content.location}</p> : null}
+              </div>
+            </div>
+            <p className="mt-5 line-clamp-3 text-sm leading-7 text-[#5d6d81]">{headline}</p>
+            <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8091a8]">View profile</span>
+              <ArrowUpRight className="h-5 w-5 text-[#16304e]" />
+            </div>
+          </div>
         </div>
       </Link>
     )

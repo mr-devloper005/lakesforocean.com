@@ -144,6 +144,8 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   const content = getContent(post);
   const isClassified = task === "classified";
   const isArticle = task === "article";
+  const isImage = task === "image";
+  const isProfile = task === "profile";
   const category = content.category || post.tags?.[0] || taskConfig?.label || task;
   const description = content.description || post.summary || "Details coming soon.";
   const descriptionHtml = !isArticle ? formatRichHtml(description, "Details coming soon.") : "";
@@ -169,6 +171,13 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
   const isBookmark = task === "sbm" || task === "social";
   const hideSidebar = isClassified || isArticle || task === "image" || isBookmark;
+  const profileWebsite = typeof content.website === "string" ? content.website : "";
+  const profileDomain = profileWebsite ? profileWebsite.replace(/^https?:\/\//, "").replace(/\/.*$/, "") : "";
+  const profileName =
+    (typeof (content as Record<string, unknown>).brandName === "string" && String((content as Record<string, unknown>).brandName)) ||
+    (typeof (content as Record<string, unknown>).companyName === "string" && String((content as Record<string, unknown>).companyName)) ||
+    (typeof (content as Record<string, unknown>).name === "string" && String((content as Record<string, unknown>).name)) ||
+    post.title;
   const related = (await fetchTaskPosts(task, 6))
     .filter((item) => item.slug !== post.slug)
     .filter((item) => {
@@ -230,7 +239,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
 
   if (productKind === "directory" && (task === "listing" || task === "classified" || task === "profile")) {
     return (
-      <div className={pinionAppShell}>
+      <>
         <NavbarShell />
         <DirectoryTaskDetailPage
           task={task}
@@ -244,14 +253,14 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
           related={related}
         />
         <Footer />
-      </div>
+      </>
     );
   }
 
   return (
     <div className={pinionAppShell}>
       <NavbarShell />
-      <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <main className={cn("mx-auto py-10", isProfile ? "w-full px-0" : "max-w-7xl px-4 sm:px-6 lg:px-8")}>
         <SchemaJsonLd data={schemaPayload} />
         <Link
           href={taskConfig?.route || "/"}
@@ -262,8 +271,8 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
 
         <div
           className={cn(
-            "grid gap-10",
-            hideSidebar ? "lg:grid-cols-1" : "lg:grid-cols-[2fr_1fr]"
+            isProfile ? "flex flex-col" : "grid gap-10",
+            !isProfile && (hideSidebar ? "lg:grid-cols-1" : "lg:grid-cols-[2fr_1fr]")
           )}
         >
           <div className={cn(isClassified ? "space-y-8" : "")}>
@@ -311,12 +320,139 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
 
             {!isArticle ? (
               <>
-                {!isBookmark ? (
+                {isImage ? (
+                  <div className="relative -mx-4 w-[calc(100%+2rem)] overflow-hidden bg-slate-950 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:-mx-8 lg:w-[calc(100%+4rem)]">
+                    <div className="absolute inset-0 z-0 opacity-30">
+                      <ContentImage
+                        src={images[0]}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        intrinsicWidth={800}
+                        intrinsicHeight={800}
+                      />
+                    </div>
+                    <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-600/80 via-teal-600/60 to-cyan-500/80 mix-blend-multiply" />
+                    <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-400/30 blur-3xl animate-pulse" />
+                    <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-teal-400/30 blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+                    
+                    <div className="relative z-10 flex flex-col">
+                      <div className="flex flex-wrap items-center justify-center gap-8 p-16">
+                        {images.map((image, index) => (
+                          <div key={index} className="relative group">
+                            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-75 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200" />
+                            <div className="relative h-56 w-56 overflow-hidden rounded-full border-4 border-white/30 bg-white/10 backdrop-blur-xl shadow-2xl">
+                              <ContentImage
+                                src={image}
+                                alt={`${post.title} image ${index + 1}`}
+                                fill
+                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                intrinsicWidth={800}
+                                intrinsicHeight={800}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex flex-col justify-center space-y-8 bg-black/40 p-16 backdrop-blur-2xl border-t border-white/10">
+                        <div className="flex flex-wrap items-center justify-center gap-4">
+                          <Badge className="border-2 border-emerald-400/50 bg-emerald-400/20 px-5 py-2.5 text-base font-semibold text-emerald-100 backdrop-blur-md shadow-lg shadow-emerald-400/20">{category}</Badge>
+                          {location ? (
+                            <span className="inline-flex items-center gap-2 text-white/70">
+                              <MapPin className="h-5 w-5" />
+                              {location}
+                            </span>
+                          ) : null}
+                        </div>
+                        <h1 className="text-center text-5xl font-black text-white tracking-tight">{post.title}</h1>
+                        <RichContent html={descriptionHtml} className="max-w-none text-center text-xl text-white/80 leading-relaxed" />
+                        <div className="flex flex-wrap justify-center gap-6 pt-6">
+                          {content.email ? (
+                            <a href={`mailto:${content.email}`} className="inline-flex items-center gap-3 rounded-2xl border-2 border-white/30 bg-white/10 px-8 py-4 text-lg font-bold text-white backdrop-blur-md hover:bg-white/20 transition-all hover:scale-105">
+                              <Mail className="h-5 w-5" />
+                              {content.email}
+                            </a>
+                          ) : null}
+                          {content.website ? (
+                            <a href={content.website} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-8 py-4 text-lg font-bold text-white shadow-2xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all hover:scale-105">
+                              <Globe className="h-5 w-5" />
+                              Visit source
+                            </a>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {isProfile ? (
+                  <div className="relative -mx-4 w-[calc(100%+2rem)] overflow-hidden bg-slate-950 sm:-mx-6 sm:w-[calc(100%+3rem)] lg:-mx-8 lg:w-[calc(100%+4rem)]">
+                    <div className="absolute inset-0 z-0 opacity-40">
+                      <ContentImage
+                        src={images[0]}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        intrinsicWidth={800}
+                        intrinsicHeight={800}
+                      />
+                    </div>
+                    <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-600/80 via-fuchsia-600/60 to-cyan-500/80 mix-blend-multiply" />
+                    <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-cyan-400/30 blur-3xl animate-pulse" />
+                    <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-fuchsia-400/30 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+                    <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-400/20 blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+                    
+                    <div className="relative z-10 flex flex-col">
+                      <div className="flex flex-col items-center justify-center gap-8 p-16">
+                        <div className="relative group">
+                          <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-400 opacity-75 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200" />
+                          <div className="relative h-80 w-80 overflow-hidden rounded-full border-4 border-white/30 bg-white/10 backdrop-blur-xl shadow-2xl">
+                            <ContentImage
+                              src={images[0]}
+                              alt={profileName}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              intrinsicWidth={400}
+                              intrinsicHeight={400}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-4">
+                          <Badge className="border-2 border-cyan-400/50 bg-cyan-400/20 px-5 py-2.5 text-base font-semibold text-cyan-100 backdrop-blur-md shadow-lg shadow-cyan-400/20">{category}</Badge>
+                          {location ? <Badge className="border-2 border-fuchsia-400/50 bg-fuchsia-400/20 px-5 py-2.5 text-base font-semibold text-fuchsia-100 backdrop-blur-md shadow-lg shadow-fuchsia-400/20">{location}</Badge> : null}
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-center space-y-8 bg-black/40 p-16 backdrop-blur-2xl border-t border-white/10">
+                        <div className="text-center">
+                          <p className="text-sm font-bold uppercase tracking-[0.4em] text-cyan-300">{taskConfig?.label || "Profile"}</p>
+                          <h1 className="mt-4 text-5xl font-black text-white tracking-tight">{profileName}</h1>
+                          {profileDomain ? <p className="mt-3 text-xl font-medium text-white/70">{profileDomain}</p> : null}
+                        </div>
+                        <RichContent html={descriptionHtml} className="max-w-none text-center text-xl text-white/80 leading-relaxed" />
+                        <div className="flex flex-wrap justify-center gap-6 pt-6">
+                          {profileWebsite ? (
+                            <Button className="h-14 rounded-2xl bg-gradient-to-r from-cyan-500 to-fuchsia-500 px-10 text-lg font-bold text-white shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all hover:scale-105" asChild>
+                              <a href={profileWebsite} target="_blank" rel="noreferrer">Visit website</a>
+                            </Button>
+                          ) : null}
+                          {content.email ? (
+                            <Button variant="outline" className="h-14 rounded-2xl border-2 border-white/30 bg-white/10 px-10 text-lg font-bold text-white backdrop-blur-md hover:bg-white/20 transition-all hover:scale-105" asChild>
+                              <a href={`mailto:${content.email}`}>Email profile</a>
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {!isBookmark && !isImage && !isProfile ? (
                   <div className={cn(isClassified ? "w-full" : "")}>
                     <TaskImageCarousel images={images} />
                   </div>
                 ) : null}
 
+                {!isImage && !isProfile ? (
                 <div className={cn(isClassified ? "mx-auto w-full max-w-4xl" : "mt-6")}>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                     <Badge variant="secondary" className="inline-flex items-center gap-1">
@@ -333,6 +469,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                   <h1 className="mt-4 text-3xl font-semibold text-foreground">{post.title}</h1>
                   <RichContent html={descriptionHtml} className="mt-3 max-w-3xl" />
                 </div>
+                ) : null}
               </>
             ) : null}
 

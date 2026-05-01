@@ -3,10 +3,8 @@ import { MarketingInteriorLayout, marketingInteriorCard, marketingInteriorMutedP
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { mockTeamMembers } from '@/data/mock-data'
 import { SITE_CONFIG } from '@/lib/site-config'
-import { Image as ImageIcon, Sparkles, Target, User } from 'lucide-react'
+import { Image as ImageIcon, Target, User } from 'lucide-react'
 
 const pillars = [
   {
@@ -77,33 +75,6 @@ export default function AboutPage() {
               <h3 className="mt-3 text-lg font-semibold text-neutral-950">{pillar.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-neutral-600">{pillar.body}</p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-16">
-        <div className="mb-8 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-[#005DAA]" />
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#005DAA]">Leadership & craft</p>
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {mockTeamMembers.map((member) => (
-            <Card key={member.id} className={`${marketingInteriorCard} transition-shadow hover:shadow-[0_28px_72px_rgba(15,15,25,0.07)]`}>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-12 w-12 border border-neutral-200">
-                    <AvatarImage src={member.avatar} alt={member.name} />
-                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-950">{member.name}</p>
-                    <p className="text-xs text-[#6b8caf]">{member.role}</p>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm leading-relaxed text-neutral-600">{member.bio}</p>
-                <p className="mt-3 text-xs text-neutral-500">{member.location}</p>
-              </CardContent>
-            </Card>
           ))}
         </div>
       </div>

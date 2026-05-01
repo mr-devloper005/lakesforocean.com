@@ -8,6 +8,15 @@ const escapeHtml = (value: string) =>
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+const decodeHtmlEntities = (value: string) =>
+  value
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&");
+
 const sanitizeRichHtml = (html: string) =>
   html
     .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
@@ -20,11 +29,12 @@ const sanitizeRichHtml = (html: string) =>
 export const formatRichHtml = (raw?: string | null, fallback = "Details coming soon.") => {
   const source = typeof raw === "string" ? raw.trim() : "";
   if (!source) return `<p>${escapeHtml(fallback)}</p>`;
-  if (/<[a-z][\s\S]*>/i.test(source)) {
-    return sanitizeRichHtml(source);
+  const normalized = /&lt;\/?[a-z][\s\S]*&gt;/i.test(source) ? decodeHtmlEntities(source) : source;
+  if (/<[a-z][\s\S]*>/i.test(normalized)) {
+    return sanitizeRichHtml(normalized);
   }
 
-  return source
+  return normalized
     .split(/\n{2,}/)
     .map((paragraph) => `<p>${escapeHtml(paragraph.replace(/\n/g, " ").trim())}</p>`)
     .join("");

@@ -2,7 +2,7 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Image and profile platform',
+    tagline: '',
   },
   footer: {
     tagline: 'Visual posts, creators, and discoverable profiles',

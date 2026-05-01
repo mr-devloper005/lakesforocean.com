@@ -1,7 +1,7 @@
 import { SITE_CONFIG, type TaskKey } from "./site-config";
 import { fetchSiteFeed, type SiteFeed, type SitePost } from "./site-connector";
 import { getMockPostsForTask } from "./mock-posts";
-import { isValidCategory } from "./categories";
+import { isValidCategory, normalizeCategory } from "./categories";
 
 const getTaskContentType = (task: TaskKey) =>
   SITE_CONFIG.tasks.find((item) => item.key === task)?.contentType || task;
@@ -28,10 +28,11 @@ export const getPostTaskKey = (post: SitePost): TaskKey | null => {
 export const fetchTaskPosts = async (
   task: TaskKey,
   limit = 8,
-  options?: { allowMockFallback?: boolean; fresh?: boolean }
+  options?: { allowMockFallback?: boolean; fresh?: boolean; category?: string }
 ) => {
   const allowMockFallback = options?.allowMockFallback ?? process.env.NEXT_PUBLIC_USE_MOCK_CONTENT === "true";
   const type = getTaskContentType(task);
+  const normalizedCategoryFilter = options?.category ? normalizeCategory(options.category) : null;
   const pickTaskPosts = (feed: SiteFeed<SitePost> | null) => {
     if (!feed) return [];
     return feed.posts
@@ -44,23 +45,27 @@ export const fetchTaskPosts = async (
         if (getPostType(post) !== type) return false;
         const content = post.content && typeof post.content === "object" ? post.content : {};
         const category = typeof (content as any).category === "string" ? (content as any).category : "";
+        if (normalizedCategoryFilter && normalizedCategoryFilter !== 'all') {
+          if (!category) return false;
+          return normalizeCategory(category) === normalizedCategoryFilter;
+        }
         return !category || isValidCategory(category);
       })
       .slice(0, limit);
   };
 
   try {
-    const cachedFeed = await fetchSiteFeed(limit * 6, { fresh: options?.fresh });
+    const cachedFeed = await fetchSiteFeed(limit * 6, { fresh: options?.fresh, category: options?.category });
     const cachedPosts = pickTaskPosts(cachedFeed);
     if (cachedPosts.length) return cachedPosts;
 
-    const freshFeed = await fetchSiteFeed(limit * 6, { fresh: true });
+    const freshFeed = await fetchSiteFeed(limit * 6, { fresh: true, category: options?.category });
     const filtered = pickTaskPosts(freshFeed);
     return filtered.length || !allowMockFallback
       ? filtered
-      : getMockPostsForTask(task).slice(0, limit);
+      : getMockPostsForTask(task, options?.category).slice(0, limit);
   } catch {
-    return allowMockFallback ? getMockPostsForTask(task).slice(0, limit) : [];
+    return allowMockFallback ? getMockPostsForTask(task, options?.category).slice(0, limit) : [];
   }
 };
 
