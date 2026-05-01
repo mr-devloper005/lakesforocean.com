@@ -3,7 +3,9 @@ import { ArrowRight, Building2, FileText, Image as ImageIcon, LayoutGrid, Tag, U
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { TaskListClient } from '@/components/tasks/task-list-client'
+import { CategoryFilterForm } from '@/components/tasks/category-filter-form'
 import { SchemaJsonLd } from '@/components/seo/schema-jsonld'
+import { ContentImage } from '@/components/shared/content-image'
 import { fetchTaskPosts } from '@/lib/task-data'
 import { SITE_CONFIG, getTaskConfig, type TaskKey } from '@/lib/site-config'
 import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
@@ -46,8 +48,8 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
   }
 
   const taskConfig = getTaskConfig(task)
-  const posts = await fetchTaskPosts(task, 30)
   const normalizedCategory = category ? normalizeCategory(category) : 'all'
+  const posts = await fetchTaskPosts(task, 30, { category: normalizedCategory === 'all' ? undefined : normalizedCategory })
   const intro = taskIntroCopy[task]
   const baseUrl = SITE_CONFIG.baseUrl.replace(/\/$/, '')
   const schemaItems = posts.slice(0, 10).map((post, index) => ({
@@ -154,30 +156,67 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         ) : null}
 
         {layoutKey === 'image-masonry' || layoutKey === 'image-portfolio' ? (
-          <section className="mb-12 grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div>
-              <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] ${ui.soft}`}>
-                <Icon className="h-3.5 w-3.5" /> Visual feed
+          <section className="relative mb-12 overflow-hidden rounded-3xl bg-slate-950 border border-white/10">
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-emerald-600/40 via-teal-600/30 to-cyan-500/40 mix-blend-multiply" />
+            <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl animate-pulse" />
+            <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+            
+            <div className="relative z-10 p-12">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/50 bg-emerald-400/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-100 backdrop-blur-md">
+                <Icon className="h-4 w-4" /> Curated visuals
               </div>
-              <h1 className="mt-5 text-5xl font-semibold tracking-[-0.05em]">{taskConfig?.description || 'Latest posts'}</h1>
-              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This surface leans into stronger imagery, larger modules, and more expressive spacing so visual content feels materially different from reading and directory pages.</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className={`min-h-[220px] rounded-[1.25rem] ${ui.panel}`} />
-              <div className={`min-h-[220px] rounded-[1.25rem] ${ui.soft}`} />
-              <div className={`col-span-2 min-h-[120px] rounded-[1.25rem] ${ui.panel}`} />
+              <h1 className="mt-6 max-w-3xl text-5xl font-bold tracking-tight text-white">A calmer, image-first wall built for browsing, saving, and opening standout visuals.</h1>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">The layout now behaves more like a visual discovery board: stronger cover treatment, less metadata noise, and a rhythm that gives each card more presence.</p>
+              <CategoryFilterForm 
+                taskRoute={taskConfig?.route || '/'} 
+                defaultCategory={normalizedCategory}
+                buttonText="Refine feed"
+                variant="dark"
+              />
             </div>
           </section>
         ) : null}
 
         {layoutKey === 'profile-creator' || layoutKey === 'profile-business' ? (
-          <section className={`mb-12 rounded-[1.25rem] p-8 shadow-[0_24px_70px_rgba(15,23,42,0.1)] ${ui.panel}`}>
-            <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-              <div className={`min-h-[240px] rounded-[1.25rem] ${ui.soft}`} />
-              <div>
-                <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
-                <h1 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-foreground">Profiles with stronger identity, trust, and reputation cues.</h1>
-                <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This layout prioritizes the person or business surface first, then lets the feed continue below without borrowing the same visual logic used by articles or listings.</p>
+          <section className="relative mb-12 overflow-hidden rounded-3xl bg-slate-950 border border-white/10">
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-violet-600/40 via-fuchsia-600/30 to-cyan-500/40 mix-blend-multiply" />
+            <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-violet-400/20 blur-3xl animate-pulse" />
+            <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-fuchsia-400/20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+            
+            <div className="relative z-10 p-12">
+              <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+                <div className="grid min-h-[240px] grid-cols-2 gap-4">
+                  {/* Display actual profile logos */}
+                  {posts.slice(0, 2).map((post, idx) => {
+                    const content = post.content && typeof post.content === 'object' ? post.content as Record<string, unknown> : {}
+                    const logoUrl = typeof content.logo === 'string' ? content.logo : typeof content.image === 'string' ? content.image : null
+                    return (
+                      <div key={post.id} className="relative overflow-hidden rounded-2xl bg-white/10 border border-white/20">
+                        {logoUrl ? (
+                          <ContentImage src={logoUrl} alt={post.title} fill className="object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-2xl font-bold text-white/60">
+                            {post.title.slice(0, 1).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                  {posts.length < 2 && (
+                    <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-violet-300">{taskConfig?.label || task}</p>
+                  <h1 className="mt-3 text-4xl font-bold tracking-tight text-white">Profiles with clearer identity, stronger trust cues, and a more premium first impression.</h1>
+                  <p className="mt-5 max-w-2xl text-lg leading-8 text-white/70">This surface leads with brand presence before metadata. It feels closer to a curated profile directory than a recycled card grid.</p>
+                  <CategoryFilterForm 
+                    taskRoute={taskConfig?.route || '/'} 
+                    defaultCategory={normalizedCategory}
+                    buttonText="Filter profiles"
+                    variant="profile"
+                  />
+                </div>
               </div>
             </div>
           </section>

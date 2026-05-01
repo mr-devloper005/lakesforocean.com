@@ -88,16 +88,16 @@ const taskTitles: Record<TaskKey, string[]> = {
 };
 
 const taskCategories: Record<TaskKey, string[]> = {
-  listing: ["Marketing", "Tech", "Design", "Fitness", "Automotive"],
-  classified: ["Jobs", "Real Estate", "Services", "Gigs", "Market"],
-  article: ["Strategy", "SEO", "Product", "Growth", "Ops"],
-  image: ["Lifestyle", "Travel", "Studio", "Urban", "Minimal"],
-  profile: ["Founder", "Creator", "Agency", "Team", "Consultant"],
-  social: ["Community", "News", "Updates", "Events", "Insights"],
-  pdf: ["Guides", "Playbooks", "Templates", "Reports", "Docs"],
-  org: ["Agency", "Studio", "Collective", "Partner", "Network"],
-  sbm: ["Bookmarks", "Tools", "Resources", "SEO", "Research"],
-  comment: ["Opinion", "Reply", "Discussion", "Feedback", "Debate"],
+  listing: ["business", "technology", "service", "health", "automotive"],
+  classified: ["jobs-payroll", "real-estate", "service", "shopping", "business"],
+  article: ["business", "technology", "finance", "education", "digital"],
+  image: ["lifestyle", "travel", "photography", "arts", "entertainment"],
+  profile: ["business", "lifestyle", "service", "education", "finance"],
+  social: ["social-media", "news", "entertainment", "event", "digital"],
+  pdf: ["education", "business", "technology", "finance", "digital"],
+  org: ["business", "service", "technology", "finance", "industry-manufacturing"],
+  sbm: ["technology", "business", "education", "digital", "service"],
+  comment: ["social-media", "news", "education", "entertainment", "digital"],
 };
 
 const summaryByTask: Record<TaskKey, string> = {
@@ -119,8 +119,8 @@ const randomFrom = (items: string[], index: number) =>
 const buildImage = (task: TaskKey, index: number) =>
   `https://picsum.photos/seed/${taskSeeds[task]}-${index}/1200/800`;
 
-export const getMockPostsForTask = (task: TaskKey): SitePost[] => {
-  return Array.from({ length: 5 }).map((_, index) => {
+export const getMockPostsForTask = (task: TaskKey, categoryFilter?: string): SitePost[] => {
+  const posts = Array.from({ length: 5 }).map((_, index) => {
     const title = taskTitles[task][index];
     const category = randomFrom(taskCategories[task], index);
     const slug = `${title}`
@@ -147,4 +147,14 @@ export const getMockPostsForTask = (task: TaskKey): SitePost[] => {
       publishedAt: new Date().toISOString(),
     };
   });
+
+  if (categoryFilter && categoryFilter !== 'all') {
+    return posts.filter(post => {
+      const content = post.content && typeof post.content === "object" ? post.content : {};
+      const category = typeof (content as any).category === "string" ? (content as any).category : "";
+      return category === categoryFilter;
+    });
+  }
+
+  return posts;
 };
