@@ -46,8 +46,11 @@ export default async function SearchPage({
 
   const filtered = posts.filter((post) => {
     const content = post.content && typeof post.content === "object" ? post.content : {};
+    const taskKey = post.task;
     const typeText = compactText((content as any).type);
     if (typeText === "comment") return false;
+    // Filter out profile posts
+    if (taskKey === "profile") return false;
     const description = compactText((content as any).description);
     const body = compactText((content as any).body);
     const excerpt = compactText((content as any).excerpt);
