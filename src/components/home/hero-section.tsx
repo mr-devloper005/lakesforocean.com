@@ -102,7 +102,6 @@ export function HeroSection({
   }, [slides, layout]);
 
   if (layout === "minimal") {
-    const subtitle = siteContent.hero.title[1];
     return (
       <section className="border-b border-neutral-200/90 bg-white text-neutral-950">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20 lg:pb-24">
@@ -114,8 +113,7 @@ export function HeroSection({
               <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-900">{SITE_THEME.hero.eyebrow}</span>
             </div>
             <h1 className="mt-8 font-sans text-4xl font-semibold tracking-[-0.035em] text-neutral-950 sm:text-5xl lg:text-[2.75rem] lg:leading-[1.12]">
-              {siteContent.hero.title[0]}
-              {subtitle ? <span className="mt-2 block text-neutral-800">{subtitle}</span> : null}
+              {siteContent.hero.title}
             </h1>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-neutral-600">{siteContent.hero.description}</p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -124,9 +122,6 @@ export function HeroSection({
                   {siteContent.hero.primaryCta.label}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className={`${isGalleryMosaic ? "rounded-[var(--radius)]" : "rounded-full"} px-6 shadow-none ${palette.secondary}`}>
-                <Link href={siteContent.hero.secondaryCta.href}>{siteContent.hero.secondaryCta.label}</Link>
               </Button>
             </div>
           </div>
@@ -166,8 +161,7 @@ export function HeroSection({
               {SITE_THEME.hero.eyebrow}
             </div>
             <h1 className={`mt-6 text-5xl font-semibold tracking-[-0.06em] sm:text-6xl ${palette.title}`}>
-              {siteContent.hero.title[0]}{" "}
-              {siteContent.hero.title[1] ? <span className="block opacity-90">{siteContent.hero.title[1]}</span> : null}
+              {siteContent.hero.title}
             </h1>
             <p className={`mt-6 max-w-2xl text-base leading-8 sm:text-lg ${palette.body}`}>{siteContent.hero.description}</p>
 
@@ -177,9 +171,6 @@ export function HeroSection({
                   {siteContent.hero.primaryCta.label}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className={`${buttonRound} px-6 ${palette.secondary}`}>
-                <Link href={siteContent.hero.secondaryCta.href}>{siteContent.hero.secondaryCta.label}</Link>
               </Button>
             </div>
 

@@ -53,12 +53,6 @@ export function FloatingCreateDock() {
             {imageTask.label}
           </Link>
         ) : null}
-        {profileTask ? (
-          <Link href="/create/profile" className={pill} title={`Create ${profileTask.label}`}>
-            <User className="h-4 w-4 shrink-0" aria-hidden />
-            {profileTask.label}
-          </Link>
-        ) : null}
       </div>
     </div>
   )

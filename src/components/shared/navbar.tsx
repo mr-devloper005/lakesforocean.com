@@ -103,11 +103,6 @@ export function Navbar() {
 
   const createTasks = useMemo(() => SITE_CONFIG.tasks.filter((task) => task.enabled), [])
 
-  const profileLink = useMemo(() => {
-    const task = SITE_CONFIG.tasks.find((t) => t.key === 'profile' && t.enabled)
-    return task ? { href: task.route, label: task.label } : null
-  }, [])
-
   const navigation = useMemo(() => SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'profile'), [])
   const primaryNavigation = navigation.slice(0, 5)
   const mobileNavigation = navigation.map((task) => ({
@@ -178,19 +173,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href) ? 'bg-foreground/10 text-foreground' : palette.nav,
-                  )}
-                >
-                  <User className="h-4 w-4" />
-                  {profileLink.label}
-                </Link>
-              ) : null}
             </div>
           </div>
 
@@ -287,20 +269,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  onClick={closeMobile}
-                  className={cn(
-                    'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href) ? 'bg-foreground text-background' : palette.post,
-                  )}
-                >
-                  <User className="h-5 w-5 shrink-0" />
-                  {profileLink.label}
-                </Link>
-              ) : null}
 
               <div
                 className={cn(
@@ -426,20 +394,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  className={cn(
-                    'rounded-sm px-1 py-1 text-sm font-semibold uppercase tracking-[0.16em] transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href)
-                      ? 'text-neutral-950 underline decoration-neutral-950 decoration-2 underline-offset-[10px]'
-                      : 'text-neutral-500 hover:text-neutral-950',
-                  )}
-                >
-                  {profileLink.label}
-                </Link>
-              ) : null}
               <div className="h-px min-w-[2rem] flex-1 bg-neutral-200" />
             </div>
           ) : isFloating ? (
@@ -462,19 +416,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  className={cn(
-                    'flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href) ? style.active : style.idle,
-                  )}
-                >
-                  <User className="h-4 w-4" />
-                  <span>{profileLink.label}</span>
-                </Link>
-              ) : null}
             </div>
           ) : isUtility ? (
             <div className="hidden min-w-0 flex-1 items-center gap-2 xl:flex">
@@ -490,19 +431,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href) ? style.active : style.idle,
-                  )}
-                >
-                  <User className="h-4 w-4" />
-                  {profileLink.label}
-                </Link>
-              ) : null}
             </div>
           ) : (
             <div className="hidden min-w-0 flex-1 items-center gap-1 overflow-hidden xl:flex">
@@ -524,19 +452,6 @@ export function Navbar() {
                   </Link>
                 )
               })}
-              {profileLink ? (
-                <Link
-                  href={profileLink.href}
-                  className={cn(
-                    'flex items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200',
-                    navFocus,
-                    pathname.startsWith(profileLink.href) ? style.active : style.idle,
-                  )}
-                >
-                  <User className="h-4 w-4" />
-                  <span>{profileLink.label}</span>
-                </Link>
-              ) : null}
             </div>
           )}
         </div>
@@ -659,20 +574,6 @@ export function Navbar() {
                 </Link>
               )
             })}
-            {profileLink ? (
-              <Link
-                href={profileLink.href}
-                onClick={closeMobile}
-                className={cn(
-                  'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors duration-200',
-                  navFocus,
-                  pathname.startsWith(profileLink.href) ? style.active : style.idle,
-                )}
-              >
-                <User className="h-5 w-5 shrink-0" />
-                {profileLink.label}
-              </Link>
-            ) : null}
 
             <div className={cn('mt-4 space-y-2 border-t pt-4', mobileFooterBorderClass)}>
               {!isAuthenticated ? (
