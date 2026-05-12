@@ -61,24 +61,6 @@ export default function ContactPage() {
         <div className={`${marketingInteriorCard} p-7 sm:p-8`}>
           <h2 className="text-2xl font-semibold text-neutral-950">Send a message</h2>
           <p className="mt-2 text-sm text-neutral-600">We typically reply within two business days.</p>
-          <div className="mt-5 rounded-[var(--radius)] border border-neutral-200 bg-neutral-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">Email us directly</p>
-            <a
-              href={mailtoHref}
-              className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-[#003366] transition-colors hover:text-[#005DAA]"
-            >
-              <Mail className="h-4 w-4" />
-              {contactEmail}
-            </a>
-            <div className="mt-3">
-              <a
-                href={mailtoHref}
-                className="inline-flex h-11 items-center justify-center rounded-[var(--radius)] border border-[#003366]/15 bg-white px-5 text-sm font-semibold text-[#003366] transition-colors hover:border-[#005DAA]/25 hover:text-[#005DAA]"
-              >
-                Email {SITE_CONFIG.name}
-              </a>
-            </div>
-          </div>
           <form className="mt-6 grid gap-4">
             <input
               className="h-12 rounded-[var(--radius)] border border-neutral-200 bg-white px-4 text-sm text-neutral-950 placeholder:text-neutral-400"

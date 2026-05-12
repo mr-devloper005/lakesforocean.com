@@ -8,17 +8,13 @@ export const siteContent = {
     tagline: 'Visual posts, creators, and discoverable profiles',
   },
   hero: {
-    badge: 'Gallery & profiles',
-    title: ['Image portfolios and profiles, presented with corporate clarity.'],
+    badge: 'Discover creativity in its clearest form.',
+    title: ['Discover creativity in its clearest form.'],
     description:
       'An image-first platform for galleries, creator profiles, and visually driven discovery.',
     primaryCta: {
       label: 'View gallery',
       href: '/images',
-    },
-    secondaryCta: {
-      label: 'Explore profiles',
-      href: '/profile',
     },
     searchPlaceholder: 'Search gallery posts, creators, and profiles',
     focusLabel: 'Focus',
@@ -54,10 +50,6 @@ export const siteContent = {
     primaryLink: {
       label: 'Open gallery',
       href: '/images',
-    },
-    secondaryLink: {
-      label: 'Browse profiles',
-      href: '/profile',
     },
   },
   cta: {
@@ -161,7 +153,7 @@ export const taskIntroCopy: Record<
     ],
     links: [
       { label: 'Browse gallery', href: '/images' },
-      { label: 'View profiles', href: '/profile' },
+  
     ],
   },
   profile: {
